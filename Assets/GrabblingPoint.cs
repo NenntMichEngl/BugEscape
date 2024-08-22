@@ -15,6 +15,7 @@ public class GrabblingPoint : MonoBehaviour
     Color idleColor;
     SpriteRenderer re;
     public Color goToColor;
+    public bool available;
     private void Start()
     {
         re = GetComponent<SpriteRenderer>();

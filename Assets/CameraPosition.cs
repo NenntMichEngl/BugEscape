@@ -7,23 +7,25 @@ public class CameraPosition : MonoBehaviour
     public Vector3 nextPos;
     public float lerpSpeed;
     bool shake;
-    public Vector3 offset = new Vector3(0,0, -10);
-    private void Start() {
+    public Vector3 offset = new Vector3(0, 0, -10);
+    private void Start()
+    {
         nextPos = transform.position;
     }
     public void NextLevel()
     {
-        nextPos = nextPos + new Vector3(0, 29.85f,0);
+        nextPos = nextPos + new Vector3(0, 29.85f, 0);
     }
-    private void Update() {
+    private void Update()
+    {
 
-        if(shake)
+        if (shake)
         {
-        transform.position = Vector3.Lerp(transform.position, nextPos + offset, 10 * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, nextPos + offset, 10 * Time.deltaTime);
         }
         else
         {
-        transform.position = Vector3.Lerp(transform.position, nextPos + offset, lerpSpeed * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, nextPos + offset, lerpSpeed * Time.deltaTime);
         }
     }
     public void CameraShake(float speed)
@@ -34,7 +36,7 @@ public class CameraPosition : MonoBehaviour
     IEnumerator shakeCour(float speed)
     {
         Vector2 startpos = transform.position;
-        nextPos = transform.position + new Vector3(0.5f,0.5f);
+        nextPos = transform.position + new Vector3(0.5f, 0.5f);
         yield return new WaitForSeconds(speed);
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 public class PlayerManager : MonoBehaviour
 {
+    public int startLevel;
     PlatformEffector2D[] effector2Ds;
     Vector2 spawnPoint;
     public List<Level> levels = new List<Level>();
@@ -23,8 +24,20 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        m_levelIndex = startLevel;
+        foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
+        {
+            p.available = true;
+        }
         transform.position = levels[m_levelIndex].startPos.position;
         effector2Ds = FindObjectsOfType<PlatformEffector2D>();
+        for (int i = 0; i < startLevel; i++)
+        {
+            Camera.main.GetComponent<CameraPosition>().NextLevel();
+
+        }
+        bodysLeft = levels[m_levelIndex].bodys;
+        abilityCountText.text = "0" + bodysLeft.ToString();
         StartCoroutine(spawnTrail());
         g = rb.gravityScale;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
@@ -64,11 +77,16 @@ public class PlayerManager : MonoBehaviour
             deactivatedGswitches.Add(other.gameObject);
             other.GetComponent<SpriteRenderer>().enabled = false;
             other.GetComponent<BoxCollider2D>().enabled = false;
+            other.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
         }
     }
     public void NextLevel()
     {
 
+        foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
+        {
+            p.available = false;
+        }
         m_levelIndex++;
         Camera.main.GetComponent<CameraPosition>().NextLevel();
         transform.position = levels[m_levelIndex].startPos.position;
@@ -76,6 +94,10 @@ public class PlayerManager : MonoBehaviour
         bodysLeft = levels[m_levelIndex].bodys;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         abilityCountText.text = "0" + bodysLeft.ToString();
+        foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
+        {
+            p.available = true;
+        }
         foreach (PlatformEffector2D e in effector2Ds)
         {
             Debug.Log(e + " is now 0");
@@ -103,6 +125,14 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             transform.position = levels[m_levelIndex].startPos.position;
+            foreach (GameObject x in deactivatedGswitches)
+            {
+                x.SetActive(true);
+                x.GetComponent<SpriteRenderer>().enabled = true;
+                x.GetComponent<BoxCollider2D>().enabled = true;
+                x.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            }
+            deactivatedGswitches.Clear();
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
 
@@ -135,6 +165,7 @@ public class PlayerManager : MonoBehaviour
             foreach (GameObject x in deactivatedGswitches)
             {
                 x.SetActive(true);
+                x.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
             }
             respawn = false;
             GetComponent<BoxCollider2D>().enabled = true;
@@ -194,13 +225,15 @@ public class PlayerManager : MonoBehaviour
         public Animator doorAnim;
         public Transform doorPos;
         public int bodys;
-        public Level(Vector3 pos, bool ab, Animator anim, Transform dPos, int b)
+        public GrabblingPoint[] grapps;
+        public Level(Vector3 pos, bool ab, Animator anim, Transform dPos, int b, GrabblingPoint[] grapps)
         {
             startPos.position = pos;
             ablity = ab;
             doorAnim = anim;
             dPos = doorPos;
             bodys = b;
+            this.grapps = grapps;
         }
     }
 }

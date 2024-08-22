@@ -32,12 +32,12 @@ public class GrapplingHook : MonoBehaviour
     void Update()
     {
         getNearestGrabblingPoint();
-        if (Input.GetMouseButtonDown(0) && !pm.grounded)
+        if (Input.GetKeyDown(KeyCode.K) && !pm.grounded)
         {
             StartGrapple();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyUp(KeyCode.K))
         {
             StopGrapple();
         }
@@ -66,16 +66,20 @@ public class GrapplingHook : MonoBehaviour
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float nearestDistance = Mathf.Infinity;
-
+        mousePosition = transform.position;
         int nearestIndex = -1;
         for (int i = 0; i < points.Length; i++)
         {
-            float d = Vector2.Distance(points[i].transform.position, mousePosition);
-            if (d < nearestDistance && d < maxDistanceToGrapple)
+            if (points[i].available)
             {
-                nearestDistance = d;
-                nearestIndex = i;
+                float d = Vector2.Distance(points[i].transform.position, mousePosition);
+                if (d < nearestDistance && d < maxDistanceToGrapple)
+                {
+                    nearestDistance = d;
+                    nearestIndex = i;
+                }
             }
+
         }
         if (nearestIndex < 0)
         {

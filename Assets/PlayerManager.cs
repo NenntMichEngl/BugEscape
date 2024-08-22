@@ -23,6 +23,7 @@ public class PlayerManager : MonoBehaviour
     int bodysLeft;
     private void Start()
     {
+        Application.targetFrameRate = 200;
         rb = GetComponent<Rigidbody2D>();
         m_levelIndex = startLevel;
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)

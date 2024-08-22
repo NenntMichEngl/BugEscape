@@ -19,6 +19,7 @@ public class GrapplingHook : MonoBehaviour
     GrabblingPoint[] points;
     public GrabblingPoint nearestPoint;
     public Vector2 grabPoint;
+
     GrabblingPoint activePoint;
     void Start()
     {
@@ -97,11 +98,15 @@ public class GrapplingHook : MonoBehaviour
         if (nearestPoint != null)
             nearestPoint.nearest = true;
     }
+    public GameObject audioPrefab;
+    public AudioClip hookClip;
     void StartGrapple()
     {
         if (nearestPoint == null)
             return;
 
+        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+        o.GetComponent<AudioPrefab>().StartClip(hookClip, 0.6f, .8f, 1);
         activePoint = nearestPoint;
         activePoint.active = true;
 

@@ -27994,7 +27994,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d624658eeaa5243e6aeab4c91b9eb9b6, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.05
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -33670,7 +33670,6 @@ GameObject:
   - component: {fileID: 1047118609}
   - component: {fileID: 1047118608}
   - component: {fileID: 1047118607}
-  - component: {fileID: 1047118610}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -33853,6 +33852,9 @@ MonoBehaviour:
   canDoubleJump: 0
   jumpLerpSpeed: 0
   afterSwing: 0
+  groundHitClip: {fileID: 8300000, guid: d87ebce8a2250eb40aa8af7e1787fc8a, type: 3}
+  jumpClip: {fileID: 8300000, guid: 6d2f3dbe4c4c88347962bfd8e5909ccb, type: 3}
+  audioPrefab: {fileID: 7431722995662778978, guid: bf17c63e537aa7e41afb29184edf9280, type: 3}
 --- !u!114 &1047118605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33884,7 +33886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9078363cd6e5240bff4743475bd0c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startLevel: 9
+  startLevel: 3
   levels:
   - startPos: {fileID: 1709252839}
     ablity: 0
@@ -33962,6 +33964,10 @@ MonoBehaviour:
   lerpSpeed: 3
   abilityCountText: {fileID: 894091606}
   deactivatedGswitches: []
+  audioPrefab: {fileID: 7431722995662778978, guid: bf17c63e537aa7e41afb29184edf9280, type: 3}
+  gforceClip: {fileID: 8300000, guid: e6cb6c78372ba3b4a8e12f583c6fda72, type: 3}
+  dieClip: {fileID: 8300000, guid: 5b37da0dc12056747b57273dee4254f8, type: 3}
+  setBlockClip: {fileID: 8300000, guid: a2c77b71b8a50f247a02364df058e616, type: 3}
 --- !u!232 &1047118607
 DistanceJoint2D:
   m_ObjectHideFlags: 0
@@ -34111,102 +34117,8 @@ MonoBehaviour:
   nearestPoint: {fileID: 0}
   grabPoint: {x: 0, y: 0}
   maxDistanceToGrapple: 20
---- !u!82 &1047118610
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1047118599}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 17ea4b8cca1754a6aaa5b8ff0c41b20b, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 0.511
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  audioPrefab: {fileID: 7431722995662778978, guid: bf17c63e537aa7e41afb29184edf9280, type: 3}
+  hookClip: {fileID: 8300000, guid: 899609c6674914d48be6969be1085daa, type: 3}
 --- !u!1 &1047376491
 GameObject:
   m_ObjectHideFlags: 0

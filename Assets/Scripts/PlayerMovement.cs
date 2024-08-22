@@ -31,6 +31,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpLerpSpeed;
     GrapplingHook gh;
     public bool afterSwing;
+    public AudioClip groundHitClip;
+    public AudioClip jumpClip;
+    public GameObject audioPrefab;
     private void Start()
     {
         pa = GetComponent<PlayerAttack>();
@@ -99,6 +102,9 @@ public class PlayerMovement : MonoBehaviour
                 jumpEffect.Play();
                 rb.velocity = new Vector2(rb.velocity.x, 0);
             }
+
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(jumpClip, 0.7f, 1.3f, .2f);
             if (rb.gravityScale > 0)
             {
                 rb.AddForce(new Vector2(-rb.velocity.x / 2, jumpForce), ForceMode2D.Impulse);
@@ -215,7 +221,9 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnCollisionEnter2D()
     {
-        GetComponent<AudioSource>().Play();
+
+        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+        o.GetComponent<AudioPrefab>().StartClip(groundHitClip, 0.7f, 1.3f, .2f);
     }
 
     private void OnCollisionStay2D(Collision2D collision)

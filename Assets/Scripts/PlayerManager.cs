@@ -21,6 +21,11 @@ public class PlayerManager : MonoBehaviour
     public TMP_Text abilityCountText;
     public List<GameObject> deactivatedGswitches = new List<GameObject>();
     int bodysLeft;
+    public GameObject audioPrefab;
+    public AudioClip gforceClip;
+    public AudioClip dieClip;
+    public AudioClip setBlockClip;
+    List<GameObject> placedBodys = new List<GameObject>();
     private void Start()
     {
         Application.targetFrameRate = 200;
@@ -51,6 +56,8 @@ public class PlayerManager : MonoBehaviour
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             respawn = true;
             print("die");
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(dieClip, 0.7f, 1.3f, 1);
             rb.gravityScale = Mathf.Abs(g);
             g = rb.gravityScale;
             rb.velocity = Vector2.zero;
@@ -69,6 +76,8 @@ public class PlayerManager : MonoBehaviour
         }
         if (other.tag == "gswitch")
         {
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(gforceClip, 0.2f, .4f, .6f);
             Debug.Log("change gravity");
             rb.gravityScale = -g;
             foreach (PlatformEffector2D e in effector2Ds)
@@ -90,6 +99,7 @@ public class PlayerManager : MonoBehaviour
             p.available = false;
         }
         m_levelIndex++;
+        placedBodys.Clear();
         Camera.main.GetComponent<CameraPosition>().NextLevel();
         transform.position = levels[m_levelIndex].startPos.position;
         rb.velocity = Vector2.zero;
@@ -127,6 +137,13 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             transform.position = levels[m_levelIndex].startPos.position;
+            foreach (GameObject x in placedBodys)
+            {
+                Destroy(x);
+            }
+            bodysLeft = levels[m_levelIndex].bodys;
+            abilityCountText.text = "0" + bodysLeft.ToString();
+            placedBodys.Clear();
             foreach (GameObject x in deactivatedGswitches)
             {
                 x.SetActive(true);
@@ -197,6 +214,8 @@ public class PlayerManager : MonoBehaviour
                 deactivatedGswitches[i].GetComponent<SpriteRenderer>().enabled = true;
                 deactivatedGswitches[i].GetComponent<BoxCollider2D>().enabled = true;
             }
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(setBlockClip, 0.7f, 1.3f, 1);
             bodysLeft--;
             abilityCountText.text = "0" + bodysLeft.ToString();
             GameObject body = new GameObject();
@@ -208,12 +227,13 @@ public class PlayerManager : MonoBehaviour
             body.transform.localScale = gameObject.transform.localScale;
             body.transform.position = transform.position;
             transform.position = levels[m_levelIndex].startPos.position;
+            placedBodys.Add(body);
             rb.gravityScale = Mathf.Abs(g);
             g = Mathf.Abs(g);
             rb.velocity = Vector2.zero;
         }
     }
-    
+
     IEnumerator spawnTrail()
     {
         yield return new WaitForSeconds(0.2f);

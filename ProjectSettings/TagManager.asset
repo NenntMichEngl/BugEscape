@@ -10,6 +10,7 @@ TagManager:
   - cannotability
   - aufgeher
   - gswitch
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -22,8 +23,8 @@ TagManager:
   - UI
   - TV
   - Grapable
-  - 
-  - 
+  - Bullet
+  - Canon
   - 
   - 
   - 

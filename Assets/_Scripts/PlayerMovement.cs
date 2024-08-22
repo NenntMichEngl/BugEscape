@@ -41,6 +41,9 @@ public class PlayerMovement : MonoBehaviour
         gh = GetComponent<GrapplingHook>();
         jumpRemaining = jumpAmount;
     }
+    bool lastState = false;
+    bool lastStateRight = false;
+    bool lastStateLeft = false;
     private void Update()
     {
         transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, jumpLerpSpeed * Time.deltaTime);
@@ -121,7 +124,7 @@ public class PlayerMovement : MonoBehaviour
             }
             jumpRemaining--;
         }
-
+        
 
     }
 
@@ -150,7 +153,9 @@ public class PlayerMovement : MonoBehaviour
                     smashEffect.Play();
 
                 }
-
+                if(rb.gravityScale > 0 && rb.velocity.y<= 0)
+                grounded = true;
+                if(rb.gravityScale < 0 && rb.velocity.y>= 0)
                 grounded = true;
 
 
@@ -200,6 +205,14 @@ public class PlayerMovement : MonoBehaviour
         {
             touchingL = true;
         }
+        if(lastState == false && grounded == true)
+        {
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+        o.GetComponent<AudioPrefab>().StartClip(groundHitClip, 0.7f, 1.3f, .2f);
+            
+        }
+        
+        lastState = grounded;
     }
     public void CameraShake()
     {
@@ -222,8 +235,7 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D()
     {
 
-        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-        o.GetComponent<AudioPrefab>().StartClip(groundHitClip, 0.7f, 1.3f, .2f);
+        
     }
 
     private void OnCollisionStay2D(Collision2D collision)

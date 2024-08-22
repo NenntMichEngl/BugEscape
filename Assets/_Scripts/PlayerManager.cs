@@ -25,6 +25,7 @@ public class PlayerManager : MonoBehaviour
     public AudioClip gforceClip;
     public AudioClip dieClip;
     public AudioClip setBlockClip;
+    public AudioClip newLevelClip;
     List<GameObject> placedBodys = new List<GameObject>();
     private void Start()
     {
@@ -60,6 +61,7 @@ public class PlayerManager : MonoBehaviour
             o.GetComponent<AudioPrefab>().StartClip(dieClip, 0.7f, 1.3f, 1);
             rb.gravityScale = Mathf.Abs(g);
             g = rb.gravityScale;
+            levels[m_levelIndex].doorAnim.SetTrigger("open");
             rb.velocity = Vector2.zero;
             for (int i = 0; i < deactivatedGswitches.Count; i++)
             {
@@ -106,6 +108,8 @@ public class PlayerManager : MonoBehaviour
         bodysLeft = levels[m_levelIndex].bodys;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         abilityCountText.text = "0" + bodysLeft.ToString();
+        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(newLevelClip, 0.4f, 0.5f, 1);
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
         {
             p.available = true;
@@ -219,6 +223,7 @@ public class PlayerManager : MonoBehaviour
             bodysLeft--;
             abilityCountText.text = "0" + bodysLeft.ToString();
             GameObject body = new GameObject();
+            levels[m_levelIndex].doorAnim.SetTrigger("open");
             body.AddComponent<SpriteRenderer>();
             body.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
             body.GetComponent<SpriteRenderer>().color = Color.yellow;

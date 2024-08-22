@@ -5,7 +5,10 @@ using UnityEngine;
 public class AudioPrefab : MonoBehaviour
 {
     public AudioSource source;
-
+    void Start()
+    {
+        Destroy(gameObject, 2);
+    }
     public void StartClip(AudioClip clip, float pitchstart, float pitchend, float volume)
     {
         source.clip = clip;

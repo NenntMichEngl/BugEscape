@@ -58,13 +58,12 @@ public class PlayerManager : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             respawn = true;
-            print("die");
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
             o.GetComponent<AudioPrefab>().StartClip(dieClip, 0.7f, 1.3f, 1);
             rb.gravityScale = Mathf.Abs(g);
             g = rb.gravityScale;
             levels[m_levelIndex].doorAnim.SetTrigger("open");
-            
+
             rb.velocity = Vector2.zero;
             for (int i = 0; i < deactivatedGswitches.Count; i++)
             {
@@ -83,7 +82,7 @@ public class PlayerManager : MonoBehaviour
         {
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
             o.GetComponent<AudioPrefab>().StartClip(gforceClip, 0.2f, .4f, .6f);
-            Debug.Log("change gravity");
+
             rb.gravityScale = -g;
             foreach (PlatformEffector2D e in effector2Ds)
             {
@@ -114,14 +113,13 @@ public class PlayerManager : MonoBehaviour
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         abilityCountText.text = "0" + bodysLeft.ToString();
         GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-            o.GetComponent<AudioPrefab>().StartClip(newLevelClip, 0.4f, 0.5f, 1);
+        o.GetComponent<AudioPrefab>().StartClip(newLevelClip, 0.4f, 0.5f, .7f);
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
         {
             p.available = true;
         }
         foreach (PlatformEffector2D e in effector2Ds)
         {
-            Debug.Log(e + " is now 0");
             e.rotationalOffset = 0;
         }
     }

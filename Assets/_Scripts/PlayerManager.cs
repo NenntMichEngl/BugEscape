@@ -21,6 +21,7 @@ public class PlayerManager : MonoBehaviour
     public TMP_Text abilityCountText;
     public List<GameObject> deactivatedGswitches = new List<GameObject>();
     int bodysLeft;
+    public Textbox textbox;
     public GameObject audioPrefab;
     public AudioClip gforceClip;
     public AudioClip dieClip;
@@ -46,6 +47,7 @@ public class PlayerManager : MonoBehaviour
         bodysLeft = levels[m_levelIndex].bodys;
         abilityCountText.text = "0" + bodysLeft.ToString();
         StartCoroutine(spawnTrail());
+        textbox.displayText(levels[m_levelIndex].displayText);
         g = rb.gravityScale;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         levelStartAnim = false;
@@ -62,6 +64,7 @@ public class PlayerManager : MonoBehaviour
             rb.gravityScale = Mathf.Abs(g);
             g = rb.gravityScale;
             levels[m_levelIndex].doorAnim.SetTrigger("open");
+            
             rb.velocity = Vector2.zero;
             for (int i = 0; i < deactivatedGswitches.Count; i++)
             {
@@ -100,7 +103,9 @@ public class PlayerManager : MonoBehaviour
         {
             p.available = false;
         }
+        textbox.cleartext();
         m_levelIndex++;
+        textbox.displayText(levels[m_levelIndex].displayText);
         placedBodys.Clear();
         Camera.main.GetComponent<CameraPosition>().NextLevel();
         transform.position = levels[m_levelIndex].startPos.position;
@@ -255,7 +260,8 @@ public class PlayerManager : MonoBehaviour
         public Transform doorPos;
         public int bodys;
         public GrabblingPoint[] grapps;
-        public Level(Vector3 pos, bool ab, Animator anim, Transform dPos, int b, GrabblingPoint[] grapps)
+        public string displayText;
+        public Level(Vector3 pos, bool ab, Animator anim, Transform dPos, int b, GrabblingPoint[] grapps, string displayText)
         {
             startPos.position = pos;
             ablity = ab;
@@ -263,6 +269,7 @@ public class PlayerManager : MonoBehaviour
             dPos = doorPos;
             bodys = b;
             this.grapps = grapps;
+            this.displayText = displayText;
         }
     }
 }

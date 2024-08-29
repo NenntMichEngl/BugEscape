@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
@@ -106,7 +105,7 @@ public class GrapplingHook : MonoBehaviour
             return;
 
         GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-        o.GetComponent<AudioPrefab>().StartClip(hookClip, 0.6f, .8f, 1);
+        o.GetComponent<AudioPrefab>().StartClip(hookClip, 0.6f, .8f, 1 * PlayerPrefs.GetFloat("volume"), true, false);
         activePoint = nearestPoint;
         activePoint.active = true;
 
@@ -131,6 +130,8 @@ public class GrapplingHook : MonoBehaviour
 
         while (elapsedTime < grappleLineSpeed)
         {
+            if (!isGrappling)
+                yield return null;
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / grappleLineSpeed);
             Vector2 currentPosition = Vector2.Lerp(startPosition, grappleTarget, t);
@@ -138,18 +139,21 @@ public class GrapplingHook : MonoBehaviour
             lineRenderer.SetPosition(1, currentPosition);
             yield return null;
         }
+        if (isGrappling)
+        {
+            distanceJoint.enabled = true;
+            distanceJoint.connectedAnchor = grappleTarget;
+            distanceJoint.distance = Vector2.Distance(grapplingPoint.position, grappleTarget);
+            distanceJoint.autoConfigureDistance = false;
 
+            if (rb.angularVelocity < 100)
+
+                rb.AddTorque(10);
+            // Ensure the final position is set correctly
+            lineRenderer.SetPosition(1, grappleTarget);
+        }
         // Once the line has reached the target, enable the distance joint
-        distanceJoint.enabled = true;
-        distanceJoint.connectedAnchor = grappleTarget;
-        distanceJoint.distance = Vector2.Distance(grapplingPoint.position, grappleTarget);
-        distanceJoint.autoConfigureDistance = false;
 
-        if (rb.angularVelocity < 100)
-
-            rb.AddTorque(10);
-        // Ensure the final position is set correctly
-        lineRenderer.SetPosition(1, grappleTarget);
     }
 
     void StopGrapple()

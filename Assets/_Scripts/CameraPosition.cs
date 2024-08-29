@@ -8,17 +8,27 @@ public class CameraPosition : MonoBehaviour
     public float lerpSpeed;
     bool shake;
     public Vector3 offset = new Vector3(0, 0, -10);
+    public bool started;
     private void Start()
     {
         nextPos = transform.position;
+        StartCoroutine(startCourontine());
+    }
+    IEnumerator startCourontine()
+    {
+        yield return new WaitForSeconds(.5f);
+        GetComponent<Animator>().enabled = false;
+        started = true;
     }
     public void NextLevel()
     {
-        nextPos = nextPos + new Vector3(0, 29.85f, 0);
+
+        nextPos = nextPos + new Vector3(0, 30f, 0);
     }
     private void Update()
     {
-
+        if (!started)
+            return;
         if (shake)
         {
             transform.position = Vector3.Lerp(transform.position, nextPos + offset, 10 * Time.deltaTime);

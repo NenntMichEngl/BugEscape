@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
+using System;
 public class PlayerManager : MonoBehaviour
 {
     public int startLevel;
@@ -16,22 +18,36 @@ public class PlayerManager : MonoBehaviour
     Rigidbody2D rb;
     public float lerpSpeed;
     float g;
+    BodysLeft bodyManager;
     GameObject[] doorAnims;
     bool levelStartAnim;
-    public TMP_Text abilityCountText;
+
     public List<GameObject> deactivatedGswitches = new List<GameObject>();
     int bodysLeft;
     public Textbox textbox;
     public GameObject audioPrefab;
     public AudioClip gforceClip;
+
     public AudioClip dieClip;
+    public AudioClip restartClip;
     public AudioClip setBlockClip;
     public AudioClip newLevelClip;
+    public GameObject textObject;
     List<GameObject> placedBodys = new List<GameObject>();
+    public AudioClip backgroundMusic;
+    public GameObject restartText;
+    public bool paused;
+    public TMP_Text deathsText;
+    public TMP_Text timeText;
+    int deaths;
+    float totalTime;
+    public Transform cam;
     private void Start()
     {
+        bodyManager = GameObject.FindObjectOfType<BodysLeft>();
         Application.targetFrameRate = 200;
         rb = GetComponent<Rigidbody2D>();
+        restartText.SetActive(false);
         m_levelIndex = startLevel;
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
         {
@@ -45,31 +61,46 @@ public class PlayerManager : MonoBehaviour
 
         }
         bodysLeft = levels[m_levelIndex].bodys;
-        abilityCountText.text = "0" + bodysLeft.ToString();
+
+        bodyManager.changeBodys(bodysLeft);
         StartCoroutine(spawnTrail());
-        textbox.displayText(levels[m_levelIndex].displayText);
+        if (levels[m_levelIndex].displayText != "")
+        {
+            textObject.SetActive(true);
+            textbox.textMeshPro.text = levels[m_levelIndex].displayText;
+        }
+        else
+        {
+            textObject.SetActive(false);
+        }
         g = rb.gravityScale;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         levelStartAnim = false;
+        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+        o.GetComponent<AudioPrefab>().StartClip(backgroundMusic, 0.4f, 0.5f, .1f * PlayerPrefs.GetFloat("musicvolume"), false, true);
+    }
+    void Die()
+    {
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        respawn = true;
+        GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+        o.GetComponent<AudioPrefab>().StartClip(dieClip, 0.7f, 1.3f, 1 * PlayerPrefs.GetFloat("volume"), true, false);
+        rb.gravityScale = Mathf.Abs(g);
+        g = rb.gravityScale;
+        levels[m_levelIndex].doorAnim.SetTrigger("open");
+        deaths++;
+        rb.velocity = Vector2.zero;
+        for (int i = 0; i < deactivatedGswitches.Count; i++)
+        {
+            deactivatedGswitches[i].GetComponent<SpriteRenderer>().enabled = true;
+            deactivatedGswitches[i].GetComponent<BoxCollider2D>().enabled = true;
+        }
     }
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.transform.tag == "Spike")
         {
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            respawn = true;
-            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-            o.GetComponent<AudioPrefab>().StartClip(dieClip, 0.7f, 1.3f, 1);
-            rb.gravityScale = Mathf.Abs(g);
-            g = rb.gravityScale;
-            levels[m_levelIndex].doorAnim.SetTrigger("open");
-
-            rb.velocity = Vector2.zero;
-            for (int i = 0; i < deactivatedGswitches.Count; i++)
-            {
-                deactivatedGswitches[i].GetComponent<SpriteRenderer>().enabled = true;
-                deactivatedGswitches[i].GetComponent<BoxCollider2D>().enabled = true;
-            }
+            Die();
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -81,7 +112,7 @@ public class PlayerManager : MonoBehaviour
         if (other.tag == "gswitch")
         {
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-            o.GetComponent<AudioPrefab>().StartClip(gforceClip, 0.2f, .4f, .6f);
+            o.GetComponent<AudioPrefab>().StartClip(gforceClip, 0.2f, .4f, .6f * PlayerPrefs.GetFloat("volume"), true, false);
 
             rb.gravityScale = -g;
             foreach (PlatformEffector2D e in effector2Ds)
@@ -102,18 +133,28 @@ public class PlayerManager : MonoBehaviour
         {
             p.available = false;
         }
-        textbox.cleartext();
+
         m_levelIndex++;
-        textbox.displayText(levels[m_levelIndex].displayText);
+        if (levels[m_levelIndex].displayText != "")
+        {
+            textObject.SetActive(true);
+            textbox.textMeshPro.text = levels[m_levelIndex].displayText;
+
+        }
+        else
+        {
+            textObject.SetActive(false);
+        }
+        restartText.SetActive(false);
         placedBodys.Clear();
         Camera.main.GetComponent<CameraPosition>().NextLevel();
         transform.position = levels[m_levelIndex].startPos.position;
         rb.velocity = Vector2.zero;
         bodysLeft = levels[m_levelIndex].bodys;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
-        abilityCountText.text = "0" + bodysLeft.ToString();
+        bodyManager.changeBodys(bodysLeft);
         GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-        o.GetComponent<AudioPrefab>().StartClip(newLevelClip, 0.4f, 0.5f, .7f);
+        o.GetComponent<AudioPrefab>().StartClip(newLevelClip, 0.4f, 0.5f, .7f * PlayerPrefs.GetFloat("volume"), true, false);
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
         {
             p.available = true;
@@ -135,21 +176,41 @@ public class PlayerManager : MonoBehaviour
             e.rotationalOffset = e.rotationalOffset - 180;
         }
     }
+    public GameObject gameUI;
+    public GameObject pausedUI;
+    public Button resumeButton;
+    public void resumeGame()
+    {
+        gameUI.SetActive(true);
+        pausedUI.SetActive(false);
+        paused = false;
+
+        Time.timeScale = 1;
+    }
     private void Update()
     {
+        if (!paused)
+            totalTime += Time.deltaTime;
         float distanceToSpawn;
         distanceToSpawn = Vector2.Distance(transform.position, levels[m_levelIndex].startPos.position);
         canability = levels[m_levelIndex].ablity;
-
+        if (Mathf.Abs(cam.position.y - transform.position.y) > 25)
+        {
+            Die();
+        }
         if (Input.GetKeyDown(KeyCode.R))
         {
+            deaths++;
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(restartClip, 0.7f, 1.3f, 1 * PlayerPrefs.GetFloat("volume"), true, false);
+            restartText.SetActive(false);
             transform.position = levels[m_levelIndex].startPos.position;
             foreach (GameObject x in placedBodys)
             {
                 Destroy(x);
             }
             bodysLeft = levels[m_levelIndex].bodys;
-            abilityCountText.text = "0" + bodysLeft.ToString();
+            bodyManager.changeBodys(bodysLeft);
             placedBodys.Clear();
             foreach (GameObject x in deactivatedGswitches)
             {
@@ -166,7 +227,7 @@ public class PlayerManager : MonoBehaviour
         {
             StartCoroutine(effector());
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !paused)
         {
             if (g > 0)
             {
@@ -185,7 +246,7 @@ public class PlayerManager : MonoBehaviour
             }
 
         }
-        abilityCountText.enabled = levels[m_levelIndex].ablity;
+
         if (distanceToSpawn < 0.25f)
         {
             foreach (GameObject x in deactivatedGswitches)
@@ -216,32 +277,65 @@ public class PlayerManager : MonoBehaviour
         }
         if (Input.GetKeyDown("f") && canability && bodysLeft > 0 && !GetComponent<PlayerManager>().respawn)
         {
-            for (int i = 0; i < deactivatedGswitches.Count; i++)
+            if (Vector2.Distance(transform.position, levels[m_levelIndex].startPos.position) > 0.7f)
             {
-                deactivatedGswitches[i].GetComponent<SpriteRenderer>().enabled = true;
-                deactivatedGswitches[i].GetComponent<BoxCollider2D>().enabled = true;
+                for (int i = 0; i < deactivatedGswitches.Count; i++)
+                {
+                    deactivatedGswitches[i].GetComponent<SpriteRenderer>().enabled = true;
+                    deactivatedGswitches[i].GetComponent<BoxCollider2D>().enabled = true;
+                }
+                GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+                o.GetComponent<AudioPrefab>().StartClip(setBlockClip, 0.7f, 1.3f, 1 * PlayerPrefs.GetFloat("volume"), true, false);
+                bodysLeft--;
+                bodyManager.changeBodys(bodysLeft);
+                GameObject body = new GameObject();
+                levels[m_levelIndex].doorAnim.SetTrigger("open");
+                body.AddComponent<SpriteRenderer>();
+                body.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
+                body.GetComponent<SpriteRenderer>().color = Color.yellow;
+                body.AddComponent<BoxCollider2D>();
+                body.AddComponent<PlayerDoorManager>();
+                Rigidbody2D r = body.AddComponent<Rigidbody2D>();
+                r.bodyType = RigidbodyType2D.Kinematic;
+                r.sleepMode = RigidbodySleepMode2D.NeverSleep;
+                body.layer = 6;
+                if (bodysLeft == 0)
+                {
+                    restartText.SetActive(true);
+                }
+                body.transform.localScale = gameObject.transform.localScale;
+                body.transform.position = transform.position;
+                transform.position = levels[m_levelIndex].startPos.position;
+                placedBodys.Add(body);
+                rb.gravityScale = Mathf.Abs(g);
+                g = Mathf.Abs(g);
+                rb.velocity = Vector2.zero;
             }
-            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-            o.GetComponent<AudioPrefab>().StartClip(setBlockClip, 0.7f, 1.3f, 1);
-            bodysLeft--;
-            abilityCountText.text = "0" + bodysLeft.ToString();
-            GameObject body = new GameObject();
-            levels[m_levelIndex].doorAnim.SetTrigger("open");
-            body.AddComponent<SpriteRenderer>();
-            body.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
-            body.GetComponent<SpriteRenderer>().color = Color.yellow;
-            body.AddComponent<BoxCollider2D>();
-            body.layer = 6;
-            body.transform.localScale = gameObject.transform.localScale;
-            body.transform.position = transform.position;
-            transform.position = levels[m_levelIndex].startPos.position;
-            placedBodys.Add(body);
-            rb.gravityScale = Mathf.Abs(g);
-            g = Mathf.Abs(g);
-            rb.velocity = Vector2.zero;
+
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!paused)
+            {
+                resumeButton.Select();
+                gameUI.SetActive(false);
+                pausedUI.SetActive(true);
+                paused = true;
+                deathsText.text = "Deaths: " + deaths.ToString();
+                string timestring = TimeSpan.FromSeconds(totalTime).Hours.ToString() + ":" + TimeSpan.FromSeconds(totalTime).Minutes.ToString() + ":" + TimeSpan.FromSeconds(totalTime).Seconds.ToString();
+                timeText.text = timestring;
+                Time.timeScale = 0;
+            }
+
+
+
         }
     }
-
+    public void LoadMenu()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
+    }
     IEnumerator spawnTrail()
     {
         yield return new WaitForSeconds(0.2f);

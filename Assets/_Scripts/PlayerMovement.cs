@@ -33,19 +33,25 @@ public class PlayerMovement : MonoBehaviour
     public bool afterSwing;
     public AudioClip groundHitClip;
     public AudioClip jumpClip;
+    PlayerManager pm;
     public GameObject audioPrefab;
     private void Start()
     {
         pa = GetComponent<PlayerAttack>();
         rb = GetComponent<Rigidbody2D>();
         gh = GetComponent<GrapplingHook>();
+        pm = GetComponent<PlayerManager>();
         jumpRemaining = jumpAmount;
     }
     bool lastState = false;
     bool lastStateRight = false;
     bool lastStateLeft = false;
+
+
     private void Update()
     {
+        if (pm.paused)
+            return;
         transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, jumpLerpSpeed * Time.deltaTime);
         if (grounded)
         {
@@ -107,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-            o.GetComponent<AudioPrefab>().StartClip(jumpClip, 0.7f, 1.3f, .2f);
+            o.GetComponent<AudioPrefab>().StartClip(jumpClip, 0.7f, 1.3f, .2f * PlayerPrefs.GetFloat("volume"), true, false);
             if (rb.gravityScale > 0)
             {
                 rb.AddForce(new Vector2(-rb.velocity.x / 2, jumpForce), ForceMode2D.Impulse);
@@ -124,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
             }
             jumpRemaining--;
         }
-        
+
 
     }
 
@@ -153,10 +159,10 @@ public class PlayerMovement : MonoBehaviour
                     smashEffect.Play();
 
                 }
-                if(rb.gravityScale > 0 && rb.velocity.y<= 0)
-                grounded = true;
-                if(rb.gravityScale < 0 && rb.velocity.y>= 0)
-                grounded = true;
+                if (rb.gravityScale > 0 && rb.velocity.y <= 0)
+                    grounded = true;
+                if (rb.gravityScale < 0 && rb.velocity.y >= 0)
+                    grounded = true;
 
 
             }
@@ -205,13 +211,13 @@ public class PlayerMovement : MonoBehaviour
         {
             touchingL = true;
         }
-        if(lastState == false && grounded == true)
+        if (lastState == false && grounded == true)
         {
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
-        o.GetComponent<AudioPrefab>().StartClip(groundHitClip, 0.7f, 1.3f, .2f);
-            
+            o.GetComponent<AudioPrefab>().StartClip(groundHitClip, 0.7f, 1.3f, .2f * PlayerPrefs.GetFloat("volume"), true, false);
+
         }
-        
+
         lastState = grounded;
     }
     public void CameraShake()
@@ -235,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D()
     {
 
-        
+
     }
 
     private void OnCollisionStay2D(Collision2D collision)

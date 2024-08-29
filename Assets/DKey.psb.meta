@@ -100,7 +100,28 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
-  - name: Ebene 1
+  - name: DKey_0
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 70, y: 70, z: 70, w: 70}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 268
+      width: 256
+      height: 256
+    spriteID: e4c1ab8dad1e94261ab843c2a2b0820a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 268}
+    spritePosition: {x: 0, y: 0}
+  - name: DKey_1
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -111,7 +132,7 @@ ScriptedImporter:
       y: 4
       width: 256
       height: 256
-    spriteID: 558d2e538e3f5b346a5a037037768d6d
+    spriteID: 8a1f50163f24447399ca06b898e29ae7
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -120,27 +141,6 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
-    spritePosition: {x: 0, y: 0}
-  - name: Abgerundetes Rechteck 1
-    originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
-    rect:
-      serializedVersion: 2
-      x: 4
-      y: 268
-      width: 256
-      height: 256
-    spriteID: 180adda353f5cf24d8af3a044ee3dada
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 4, y: 268}
     spritePosition: {x: 0, y: 0}
   characterData:
     bones: []

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 public class PlayerManager : MonoBehaviour
 {
     public int startLevel;
@@ -21,7 +22,7 @@ public class PlayerManager : MonoBehaviour
     BodysLeft bodyManager;
     GameObject[] doorAnims;
     bool levelStartAnim;
-
+    DoorButton[] doorButtons;
     public List<GameObject> deactivatedGswitches = new List<GameObject>();
     int bodysLeft;
     public Textbox textbox;
@@ -42,11 +43,15 @@ public class PlayerManager : MonoBehaviour
     int deaths;
     float totalTime;
     public Transform cam;
+    public EventSystem es;
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         bodyManager = GameObject.FindObjectOfType<BodysLeft>();
         Application.targetFrameRate = 200;
         rb = GetComponent<Rigidbody2D>();
+        doorButtons = GameObject.FindObjectsOfType<DoorButton>();
         restartText.SetActive(false);
         m_levelIndex = startLevel;
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
@@ -179,6 +184,7 @@ public class PlayerManager : MonoBehaviour
     public GameObject gameUI;
     public GameObject pausedUI;
     public Button resumeButton;
+
     public void resumeGame()
     {
         gameUI.SetActive(true);
@@ -194,6 +200,13 @@ public class PlayerManager : MonoBehaviour
         float distanceToSpawn;
         distanceToSpawn = Vector2.Distance(transform.position, levels[m_levelIndex].startPos.position);
         canability = levels[m_levelIndex].ablity;
+        if (paused)
+        {
+            if (es.currentSelectedGameObject == null)
+            {
+                resumeButton.Select();
+            }
+        }
         if (Mathf.Abs(cam.position.y - transform.position.y) > 25)
         {
             Die();
@@ -208,6 +221,10 @@ public class PlayerManager : MonoBehaviour
             foreach (GameObject x in placedBodys)
             {
                 Destroy(x);
+            }
+            foreach (DoorButton b in doorButtons)
+            {
+                b.isOpen = false;
             }
             bodysLeft = levels[m_levelIndex].bodys;
             bodyManager.changeBodys(bodysLeft);
@@ -294,7 +311,7 @@ public class PlayerManager : MonoBehaviour
                 body.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
                 body.GetComponent<SpriteRenderer>().color = Color.yellow;
                 body.AddComponent<BoxCollider2D>();
-                body.AddComponent<PlayerDoorManager>();
+
                 Rigidbody2D r = body.AddComponent<Rigidbody2D>();
                 r.bodyType = RigidbodyType2D.Kinematic;
                 r.sleepMode = RigidbodySleepMode2D.NeverSleep;
@@ -315,6 +332,8 @@ public class PlayerManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             if (!paused)
             {
                 resumeButton.Select();
@@ -330,6 +349,7 @@ public class PlayerManager : MonoBehaviour
 
 
         }
+
     }
     public void LoadMenu()
     {

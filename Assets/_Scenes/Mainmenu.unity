@@ -1790,7 +1790,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.7428589}
+  m_AnchoredPosition: {x: 0.00012207031, y: -0.7428589}
   m_SizeDelta: {x: -0.00012207, y: 1.4857}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &752616395
@@ -1916,6 +1916,8 @@ MonoBehaviour:
   resolutionObject: {fileID: 576010370}
   audioPrefab: {fileID: 7431722995662778978, guid: bf17c63e537aa7e41afb29184edf9280, type: 3}
   availableResolutions: []
+  optionsDefault: {fileID: 1514756106}
+  menuDefault: {fileID: 228288313}
   resolutionText: {fileID: 768683619}
 --- !u!1 &768683617
 GameObject:
@@ -3418,7 +3420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.7428589}
+  m_AnchoredPosition: {x: 0.00012207031, y: -0.7428589}
   m_SizeDelta: {x: -0.00012207, y: 1.4857}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1357801947
@@ -3633,6 +3635,18 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 576010373}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 752616400}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: toogleMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -4218,7 +4232,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1637499026}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 752616400}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1637499026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4590,7 +4616,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 166.795, y: -72.85}
+  m_AnchoredPosition: {x: 166.795, y: -72.850006}
   m_SizeDelta: {x: 333.59, y: 41.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2119098556

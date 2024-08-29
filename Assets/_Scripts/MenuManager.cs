@@ -21,8 +21,17 @@ public class MenuManager : MonoBehaviour
     private int currentResolutionIndex = 0;
     private GameObject lastSelected;
 
+    bool optionsMenu;
+
+    public void toogleMenu()
+    {
+        optionsMenu = !optionsMenu;
+    }
+
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         // Load volume settings
         if (PlayerPrefs.GetInt("started") == 0)
         {
@@ -49,7 +58,12 @@ public class MenuManager : MonoBehaviour
 
         ApplyResolution();
     }
-
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+    public Button optionsDefault;
+    public Button menuDefault;
     void Update()
     {
         if (lastSelected != es.currentSelectedGameObject)
@@ -68,6 +82,22 @@ public class MenuManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
                 ChangeResolution(-1);
+            }
+        }
+        if (optionsMenu)
+        {
+            if (es.currentSelectedGameObject == null)
+            {
+                Debug.Log("was null");
+                optionsDefault.Select();
+            }
+        }
+        else
+        {
+            if (es.currentSelectedGameObject == null)
+            {
+                Debug.Log("was null");
+                menuDefault.Select();
             }
         }
     }

@@ -17,12 +17,11 @@ public class CameraPosition : MonoBehaviour
     IEnumerator startCourontine()
     {
         yield return new WaitForSeconds(.5f);
-        GetComponent<Animator>().enabled = false;
+
         started = true;
     }
     public void NextLevel()
     {
-
         nextPos = nextPos + new Vector3(0, 30f, 0);
     }
     private void Update()

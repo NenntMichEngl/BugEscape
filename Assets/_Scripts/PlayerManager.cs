@@ -46,7 +46,10 @@ public class PlayerManager : MonoBehaviour
     public EventSystem es;
     VoiceLineManager voiceLineManager;
     bool firstDeath = true;
+    bool firstG = true;
     int deathsInBodyLevel;
+    GameObject lastSelected;
+    public AudioClip menuClip;
     private void Start()
     {
         voiceLineManager = GameObject.FindObjectOfType<VoiceLineManager>();
@@ -58,19 +61,40 @@ public class PlayerManager : MonoBehaviour
         doorButtons = GameObject.FindObjectsOfType<DoorButton>();
         restartText.SetActive(false);
         m_levelIndex = startLevel;
+        if (startLevel == 0)
+        {
+            if (!PlayerPrefs.HasKey("lastLevel"))
+            {
+                PlayerPrefs.SetInt("lastLevel", 0);
+                PlayerPrefs.SetInt("lastDeathAmount", 0);
+                PlayerPrefs.SetFloat("lastTime", 0);
+            }
+            else
+            {
+                m_levelIndex = PlayerPrefs.GetInt("lastLevel");
+                deaths = PlayerPrefs.GetInt("lastDeathAmount");
+                totalTime = PlayerPrefs.GetFloat("lastTime");
+                Debug.Log(PlayerPrefs.GetInt("lastLevel"));
+
+            }
+        }
+
         foreach (GrabblingPoint p in levels[m_levelIndex].grapps)
         {
             p.available = true;
         }
-        transform.position = levels[m_levelIndex].startPos.position;
+
         effector2Ds = FindObjectsOfType<PlatformEffector2D>();
-        for (int i = 0; i < startLevel; i++)
+        float camY = cam.transform.position.y;
+        for (int i = 0; i < PlayerPrefs.GetInt("lastLevel"); i++)
         {
-            Camera.main.GetComponent<CameraPosition>().NextLevel();
+            camY += 30f;
 
         }
         bodysLeft = levels[m_levelIndex].bodys;
-
+        transform.position = levels[m_levelIndex].startPos.position;
+        cam.transform.position = new Vector3(cam.transform.position.x, camY, cam.transform.position.z);
+        cam.GetComponent<CameraPosition>().nextPos = new Vector3(cam.transform.position.x, camY, cam.transform.position.z);
         bodyManager.changeBodys(bodysLeft);
         StartCoroutine(spawnTrail());
         if (levels[m_levelIndex].displayText != "")
@@ -127,11 +151,21 @@ public class PlayerManager : MonoBehaviour
         }
     }
     bool firstTimePassed = true;
+    bool firstTimeGrapple = true;
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "door")
         {
             NextLevel();
+        }
+        if (other.tag == "PassedGrapple")
+        {
+            if (firstTimeGrapple)
+            {
+                firstTimeGrapple = false;
+                voiceLineManager.PassedGrappleGap();
+            }
+
         }
         if (other.tag == "PassedGap")
         {
@@ -146,7 +180,11 @@ public class PlayerManager : MonoBehaviour
         {
             GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
             o.GetComponent<AudioPrefab>().StartClip(gforceClip, 0.2f, .4f, .6f * PlayerPrefs.GetFloat("volume"), true, false);
-
+            if (firstG)
+            {
+                firstG = false;
+                voiceLineManager.ChangedG();
+            }
             rb.gravityScale = -g;
             foreach (PlatformEffector2D e in effector2Ds)
             {
@@ -166,12 +204,20 @@ public class PlayerManager : MonoBehaviour
         {
             p.available = false;
         }
-
+        if (m_levelIndex == 8)
+        {
+            voiceLineManager.GettingThehangOfIt();
+        }
         m_levelIndex++;
 
+        PlayerPrefs.SetInt("lastLevel", m_levelIndex);
+        Debug.Log(PlayerPrefs.GetInt("lastLevel"));
+        PlayerPrefs.SetFloat("lastTime", totalTime);
+        PlayerPrefs.SetInt("lastDeathAmount", deaths);
         if (m_levelIndex == 1)
             voiceLineManager.SecondLevelReached();
-
+        if (m_levelIndex == 13)
+            voiceLineManager.gotToCanonLevel();
         if (levels[m_levelIndex].displayText != "")
         {
             textObject.SetActive(true);
@@ -186,6 +232,7 @@ public class PlayerManager : MonoBehaviour
         placedBodys.Clear();
         Camera.main.GetComponent<CameraPosition>().NextLevel();
         transform.position = levels[m_levelIndex].startPos.position;
+
         rb.velocity = Vector2.zero;
         bodysLeft = levels[m_levelIndex].bodys;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
@@ -230,6 +277,15 @@ public class PlayerManager : MonoBehaviour
     {
         if (!paused)
             totalTime += Time.deltaTime;
+
+
+        if (lastSelected != es.currentSelectedGameObject)
+        {
+            lastSelected = es.currentSelectedGameObject;
+            GameObject o = Instantiate(audioPrefab, transform.position, Quaternion.identity) as GameObject;
+            o.GetComponent<AudioPrefab>().StartClip(menuClip, 0.7f, 1.3f, .5f * PlayerPrefs.GetFloat("volume"), true, false);
+        }
+
         float distanceToSpawn;
         distanceToSpawn = Vector2.Distance(transform.position, levels[m_levelIndex].startPos.position);
         canability = levels[m_levelIndex].ablity;
@@ -329,6 +385,10 @@ public class PlayerManager : MonoBehaviour
         {
             transform.position = Vector2.Lerp(new Vector2(transform.position.x, levels[m_levelIndex].startPos.position.y),
             levels[m_levelIndex].startPos.position, Time.deltaTime * 2);
+        }
+        if (Input.GetKeyDown("f") && bodysLeft == 0 && levels[m_levelIndex].bodys != 0)
+        {
+            voiceLineManager.NOBodysLeft();
         }
         if (Input.GetKeyDown("f") && canability && bodysLeft > 0 && !GetComponent<PlayerManager>().respawn)
         {

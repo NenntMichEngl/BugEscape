@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     public int jumpRemaining;
     PlayerAttack pa;
     Rigidbody2D rb;
-    bool colision;
+
     public bool touchingL;
     public bool touchingR;
     public CinemachineVirtualCamera cmcam;
@@ -44,8 +44,7 @@ public class PlayerMovement : MonoBehaviour
         jumpRemaining = jumpAmount;
     }
     bool lastState = false;
-    bool lastStateRight = false;
-    bool lastStateLeft = false;
+
 
 
     private void Update()
@@ -244,14 +243,6 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        colision = true;
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        colision = false;
-    }
     IEnumerator jumping()
     {
         yield return new WaitForSeconds(0.2f);

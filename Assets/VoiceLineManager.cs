@@ -11,6 +11,7 @@ public class VoiceLineManager : MonoBehaviour
     public AudioClip doNotTouchRed;
     public AudioClip bigGap;
     public AudioClip whatImtalkingAbout;
+    public AudioClip tryingToGo;
     private void Start()
     {
         source = GetComponent<AudioSource>();
@@ -27,7 +28,10 @@ public class VoiceLineManager : MonoBehaviour
         source.clip = line;
         source.Play();
     }
-
+    public void FellOfMap()
+    {
+        PlayVoiceLine(tryingToGo, 0.2f);
+    }
     void PlayVoiceLine(AudioClip line, float delay)
     {
         StartCoroutine(playVoicelinewithTimer(line, delay));

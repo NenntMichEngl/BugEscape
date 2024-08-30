@@ -28506,8 +28506,8 @@ Transform:
   m_GameObject: {fileID: 488339846}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0964, y: -16.35, z: 0}
-  m_LocalScale: {x: 5.4988575, y: 0.4431757, z: 1}
+  m_LocalPosition: {x: -0.9273, y: -16.35, z: 0}
+  m_LocalScale: {x: 5.667672, y: 0.4431757, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1521154937}
@@ -76758,8 +76758,8 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: 0.95
+  m_Pitch: 0.95
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -76874,6 +76874,7 @@ MonoBehaviour:
   doNotTouchRed: {fileID: 8300000, guid: d1980d6a46f651e48a1e0de26c587a82, type: 3}
   bigGap: {fileID: 8300000, guid: fdea803460186544fb43fa620cefff9f, type: 3}
   whatImtalkingAbout: {fileID: 8300000, guid: 68aafc3983a9b5d48be32880b76244d7, type: 3}
+  tryingToGo: {fileID: 8300000, guid: e40266ff2461e4c31bc5f55b5bb34f98, type: 3}
 --- !u!213 &1582516798
 Sprite:
   m_ObjectHideFlags: 0

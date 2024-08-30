@@ -103,7 +103,8 @@ public class PlayerManager : MonoBehaviour
             deathsInBodyLevel++;
             if (deathsInBodyLevel % 3 == 0)
             {
-                voiceLineManager.TwoDeathsInBodyLevel();
+                if (firstTimePassed)
+                    voiceLineManager.TwoDeathsInBodyLevel();
             }
         }
         rb.velocity = Vector2.zero;
@@ -224,6 +225,7 @@ public class PlayerManager : MonoBehaviour
 
         Time.timeScale = 1;
     }
+    bool firstTimeFellOfMap = true;
     private void Update()
     {
         if (!paused)
@@ -240,6 +242,11 @@ public class PlayerManager : MonoBehaviour
         }
         if (Mathf.Abs(cam.position.y - transform.position.y) > 25)
         {
+            if (firstTimeFellOfMap)
+            {
+                firstTimeFellOfMap = false;
+                voiceLineManager.FellOfMap();
+            }
             Die();
         }
         if (Input.GetKeyDown(KeyCode.R))

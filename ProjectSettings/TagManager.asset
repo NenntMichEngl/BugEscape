@@ -12,6 +12,7 @@ TagManager:
   - gswitch
   - Bullet
   - Opener
+  - PassedGap
   layers:
   - Default
   - TransparentFX

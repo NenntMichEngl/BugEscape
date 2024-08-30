@@ -44,8 +44,12 @@ public class PlayerManager : MonoBehaviour
     float totalTime;
     public Transform cam;
     public EventSystem es;
+    VoiceLineManager voiceLineManager;
+    bool firstDeath = true;
+    int deathsInBodyLevel;
     private void Start()
     {
+        voiceLineManager = GameObject.FindObjectOfType<VoiceLineManager>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         bodyManager = GameObject.FindObjectOfType<BodysLeft>();
@@ -94,6 +98,14 @@ public class PlayerManager : MonoBehaviour
         g = rb.gravityScale;
         levels[m_levelIndex].doorAnim.SetTrigger("open");
         deaths++;
+        if (m_levelIndex == 3)
+        {
+            deathsInBodyLevel++;
+            if (deathsInBodyLevel % 3 == 0)
+            {
+                voiceLineManager.TwoDeathsInBodyLevel();
+            }
+        }
         rb.velocity = Vector2.zero;
         for (int i = 0; i < deactivatedGswitches.Count; i++)
         {
@@ -105,14 +117,29 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.transform.tag == "Spike")
         {
+            if (firstDeath)
+            {
+                voiceLineManager.FirstDeath();
+                firstDeath = false;
+            }
             Die();
         }
     }
+    bool firstTimePassed = true;
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "door")
         {
             NextLevel();
+        }
+        if (other.tag == "PassedGap")
+        {
+            if (firstTimePassed)
+            {
+                firstTimePassed = false;
+                voiceLineManager.WhatImtalkingAbout();
+            }
+
         }
         if (other.tag == "gswitch")
         {
@@ -140,6 +167,10 @@ public class PlayerManager : MonoBehaviour
         }
 
         m_levelIndex++;
+
+        if (m_levelIndex == 1)
+            voiceLineManager.SecondLevelReached();
+
         if (levels[m_levelIndex].displayText != "")
         {
             textObject.SetActive(true);
